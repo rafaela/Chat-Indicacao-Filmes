@@ -1,0 +1,25 @@
+{
+  "name": "chat-indicacao-filmes-back-end",
+  "version": "1.0.0",
+  "description": "Back-end do chat de indicação de filmes",
+  "main": "loader.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rafaela/Chat-Indicacao-Filmes.git"
+  },
+  "keywords": [
+    "chat",
+    "filme",
+    "watson",
+    "ibm"
+  ],
+  "author": "Rafaela Paiva",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rafaela/Chat-Indicacao-Filmes/issues"
+  },
+  "homepage": "https://github.com/rafaela/Chat-Indicacao-Filmes#readme"
+}
