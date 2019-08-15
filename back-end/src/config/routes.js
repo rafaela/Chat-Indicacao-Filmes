@@ -1,7 +1,7 @@
 const express = require('express') 
 const chatService = require('../api/chat/chatService')
 const filmesService = require('../api/filmes/filmesService')
-const chatbot = require('../api/chatbot/chatbot')
+const chatBot = require('../api/chatbot/chatbot')
 
 module.exports = function (server) {
 
