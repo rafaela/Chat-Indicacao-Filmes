@@ -3,40 +3,18 @@ const mongoose = restful.mongoose
 
 
 const filmesSchema = new mongoose.Schema({
-    titulo: {
-        type: String, 
-        required: true
-    },
-    imagem:{
-        type: String, 
-        required: true
-    },
+    titulo: { type: String, required: true },
+    imagem:{ type: String,  required: true },
+    categoria:{ type: String,  required: true },
     genero: [],
-    resumo: {
-        type: String, 
-        required: true
-    },
-    diretor: {
-        type: String, 
-        required: true
-    },
+    resumo: { type: String },
+    diretor: {type: String },
     elenco: [],
-    classificacao:{
-        type: String, 
-        required: true
-    },
-    avaliacao:{
-        type: String, 
-        required: true
-    },
-    duracao:{
-        type: String, 
-        required: true
-    },
-    ano:{
-        type: String, 
-        required: true
-    }
+    classificacao:{ type: String },
+    avaliacao:{ type: String },
+    duracao:{ type: String },
+    ano:{ type: String },
+    colocaco:{ type: String }
 
 })
 
