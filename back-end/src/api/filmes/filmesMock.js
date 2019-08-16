@@ -1,6 +1,6 @@
 const filmesService = require('./filmesService')
 const fs = require('fs');
-const filmes = require('../dados/avaliacaoFilmesGenero')
+const filmes = require('../dados/avaliacaoFilmeGenero')
  
 
 

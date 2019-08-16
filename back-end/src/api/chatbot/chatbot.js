@@ -1,4 +1,4 @@
-  
+
 require('dotenv').config() //Obtem as variáveis de ambiente do arquivo '.env'
 const AssistantV1 = require('ibm-watson/assistant/v1');
 const chatService = require('../chat/chatService')
@@ -40,43 +40,30 @@ iniciarOuContinuarConversa = (input) => new Promise((resolve, reject) => {
 // Utilizando a resposta do Watson, cria novas questões dentro da reposta.
 reconstruirIntencoesEntidadesContexto = (watsonObject) => new Promise((resolve, reject) => {
     // Se existir uma inteção e ela for #Comprar
-    if (watsonObject.intents.length > 0 && watsonObject.intents[0].intent == 'Comprar') {
+    if (watsonObject.intents.length > 0 && watsonObject.intents[0].intent == 'indicar') {
         allSearchs = [] // Lista que armazenará todas as promisses que tem que ser resolvidas.
-        // Vou varrer todas as entidades procurando por filme
         for (let index = 0; index < watsonObject.entities.length; index++) {
-            // Achei um filme
-            if (watsonObject.entities[index].entity == 'filme') {
-                let search;
-                // Pego o nome dos filmes completo baseando na localização de caracteres que o watson fornece.
-                if (index + 1 < watsonObject.entities.length) {
-                    search = watsonObject.input.text.substring(
-                        watsonObject.entities[index].location[0],
-                        watsonObject.entities[index + 1].location[0]
-                    )
-                }
-                // Se tiver só um filme na lista de entidades, essa é a forma simples de pegá-lo.
-                else {
-                    search = watsonObject.input.text.substring(
-                        watsonObject.entities[index].location[0]
-                    )
-                }
-                // Vou adicionar na minha lista, a nova busca que vou fazer deste filme
+            // Achei uma categoria
+            if (watsonObject.entities[index].entity == 'categoria') {
                 allSearchs.push(new Promise((resolve, reject) => {
-                    // Busco esse nome (que está na variável search) utilizando um regex
-                    filmesService.find({ "name": { "$regex": search.trim(), "$options": "i" } }, (err, data) => {
-                        // Se não achei, contateno a mensagem de que não foi encontrado aquele.
-                        if (err || data.length == 0 || data == undefined) {
-                            watsonObject.output.generic[0].text += ", Este outro filme não foi encontrado.";
-                            resolve(watsonObject); //Return da promisse
+                    filmesService.find({ genero: { $in: [parseInt(watsonObject.entities[index].value)] } }, (err, data) => {
+                        console.log(data);
+                        if (err || data.length <= 0 || data == undefined) {
+                            watsonObject.output.generic.push({
+                                response_type: 'text',
+                                text: 'não encontrei nenhum filme com essa categoria.'
+                            })
                         }
-                        // Caso ache, eu coloco na lista de contexto items e adiciono o nome do filme na mensagem de usuário.
                         else {
-                            // Se eu tenho uma lista, adiciono a ela, se a lista não existe, crio ela.
-                            watsonObject.context.hasOwnProperty("itens") && watsonObject.context.itens != '' ? watsonObject.context.itens.push(data[0]) : watsonObject.context.itens = [data[0]];
-                            watsonObject.output.generic[0].text += ` ${data[0].name}, `; // Adicionando nome do filme na mensagem.
-                            resolve(watsonObject); //Return da promisse
+                            watsonObject.context.filmes = data;
+                            watsonObject.output.generic.push({
+                                response_type: 'text',
+                                text: `Te mandei os melhores filmes de ${watsonObject.entities[index].entity} e algumas informações sobre eles`
+                            })
+                            
                         }
-                    });
+                        resolve(watsonObject);
+                    })
                 }));
             }
         }
@@ -85,39 +72,6 @@ reconstruirIntencoesEntidadesContexto = (watsonObject) => new Promise((resolve, 
             resolve(watsonObject); // Return da promise reconstruirIntencoesEntidadesContexto
         });
     }
-    // Se a inteção for #ver_carrinho
-    /*else if (watsonObject.intents.length > 0 && watsonObject.intents[0].intent == 'ver_carrinho') {
-        // Pego todos os itens do meu carrinho que são objetos, e exibo seus nomes usando o map do nodejs.
-        if (watsonObject.context.hasOwnProperty("itens") && watsonObject.context.itens != '') {
-            watsonObject.output.generic[0].text += ` Eles são: ${watsonObject.context.itens.map(item => item.name).join(', ')}`;
-        }
-        resolve(watsonObject); // Return da promise reconstruirIntencoesEntidadesContexto 
-    }
-    // Se a inteção for #remover_carrinho
-    else if (watsonObject.intents.length > 0 && watsonObject.intents[0].intent == 'remover_carrinho') {
-        let tem_numero = false;
-        // Vejo se meu carrinho tem algum item
-        if (watsonObject.context.hasOwnProperty("itens") && watsonObject.context.itens != '') {
-            watsonObject.entities.forEach(entity => {
-                // Vejo se o usuário informou algum numero.
-                if (entity.entity == 'sys-number') {
-                    let pos = parseInt(entity.value);
-                    // Removo do carrinho, a posição informada pelo usuário
-                    watsonObject.context.itens.splice(pos - 1, 1);
-                    tem_numero = true;
-                }
-            });
-        }
-        else {
-            watsonObject.output.generic[0].text = "Não tem nada no seu carrinho!";
-        }
-
-        if (!tem_numero) {
-            watsonObject.output.generic[0].text = "Você precisa me informar um número";
-        }
-
-        resolve(watsonObject); // Return da promise reconstruirIntencoesEntidadesContexto
-    }*/
     else {
         resolve(watsonObject); // Return da promise reconstruirIntencoesEntidadesContexto
     }
