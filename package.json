@@ -1,25 +1,39 @@
 {
-  "name": "chat-indicacao-filmes-back-end",
+  "name": "Chat-Indicacao-Filmes",
   "version": "1.0.0",
-  "description": "Back-end do chat de indicação de filmes",
-  "main": "loader.js",
+  "description": "",
+  "main": "src/loader.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/loader.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon",
+    "production": "pm2 start src/loader.js --name chat_api"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rafaela/Chat-Indicacao-Filmes.git"
   },
-  "keywords": [
-    "chat",
-    "filme",
-    "watson",
-    "ibm"
-  ],
-  "author": "Rafaela Paiva",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/rafaela/Chat-Indicacao-Filmes/issues"
   },
-  "homepage": "https://github.com/rafaela/Chat-Indicacao-Filmes#readme"
+  "homepage": "https://github.com/rafaela/Chat-Indicacao-Filmes#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "dotenv": "^6.2.0",
+    "express": "^4.14.0",
+    "express-query-int": "^1.0.1",
+    "ibm-watson": "^4.1.3",
+    "mongoose": "^4.7.0",
+    "node-restful": "^0.2.5",
+    "nodemon": "^1.11.0",
+    "pm2": "^2.1.5",
+    "watson-developer-cloud": "^3.15.1"
+  },
+  "engines": {
+    "node": "8.15.1",
+    "npm": "6.4.1"
+  }
 }
