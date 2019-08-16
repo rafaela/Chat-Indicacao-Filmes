@@ -7,6 +7,7 @@ const filmesSchema = new mongoose.Schema({
     imagem:{ type: String,  required: true },
     categoria:{ type: String,  required: true },
     genero: [],
+    generos_id: [],
     resumo: { type: String },
     diretor: {type: String },
     elenco: [],

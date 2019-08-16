@@ -40,41 +40,37 @@ iniciarOuContinuarConversa = (input) => new Promise((resolve, reject) => {
 // Utilizando a resposta do Watson, cria novas questões dentro da reposta.
 reconstruirIntencoesEntidadesContexto = (watsonObject) => new Promise((resolve, reject) => {
     // Se existir uma inteção e ela for #Comprar
-    if (watsonObject.intents.length > 0 && watsonObject.intents[0].intent == 'indicar') {
-        allSearchs = [] // Lista que armazenará todas as promisses que tem que ser resolvidas.
-        for (let index = 0; index < watsonObject.entities.length; index++) {
-            // Achei uma categoria
-            if (watsonObject.entities[index].entity == 'categoria') {
-                allSearchs.push(new Promise((resolve, reject) => {
-                    filmesService.find({ genero: { $in: [parseInt(watsonObject.entities[index].value)] } }, (err, data) => {
-                        console.log(data);
-                        if (err || data.length <= 0 || data == undefined) {
-                            watsonObject.output.generic.push({
-                                response_type: 'text',
-                                text: 'não encontrei nenhum filme com essa categoria.'
-                            })
-                        }
-                        else {
-                            watsonObject.context.filmes = data;
-                            watsonObject.output.generic.push({
-                                response_type: 'text',
-                                text: `Te mandei os melhores filmes de ${watsonObject.entities[index].entity} e algumas informações sobre eles`
-                            })
-                            
-                        }
-                        resolve(watsonObject);
-                    })
-                }));
-            }
+    allSearchs = [] // Lista que armazenará todas as promisses que tem que ser resolvidas.
+    for (let index = 0; index < watsonObject.entities.length; index++) {
+        // Achei uma categoria
+        if (watsonObject.entities[index].entity == 'categoria') {
+            allSearchs.push(new Promise((resolve, reject) => {
+                filmesService.find({ generos_id: { $in: [parseInt(watsonObject.entities[index].value)] } }, (err, data) => {
+                    console.log(data);
+                    if (err || data.length <= 0 || data == undefined) {
+                        watsonObject.output.generic.push({
+                            response_type: 'text',
+                            text: 'não encontrei nenhum filme com essa categoria.'
+                        })
+                    }
+                    else {
+                        watsonObject.context.filmes = data;
+                        watsonObject.output.generic.push({
+                            response_type: 'text',
+                            text: `Te mandei os melhores filmes da categoria que me pediu e algumas informações sobre eles`
+                        })
+                        
+                    }
+                    resolve(watsonObject);
+                })
+            }));
         }
-        // Depois de achar todos os filmes que busquei, simplesmente resolvo a função principal (reconstruirIntencoesEntidadesContexto).
-        Promise.all(allSearchs).then(() => {
-            resolve(watsonObject); // Return da promise reconstruirIntencoesEntidadesContexto
-        });
     }
-    else {
+    // Depois de achar todos os filmes que busquei, simplesmente resolvo a função principal (reconstruirIntencoesEntidadesContexto).
+    Promise.all(allSearchs).then(() => {
         resolve(watsonObject); // Return da promise reconstruirIntencoesEntidadesContexto
-    }
+    })
+
 });
 
 module.exports.analisarConstruirMensagem = (input) => new Promise((resolve, reject) => {
